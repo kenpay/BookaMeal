@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             if (password_verify($password, $hashed_password)) {
                 // Verifica daca caseta "Tine-ma minte" este bifata
                 if (isset($_POST['remember_me'])) {
-                    // Seteaza un cookie pentru a retine utilizatorul timp de 30 de zile (sau orice alta perioada dorita)
+                    // Seteaza un cookie pentru a retine utilizatorul timp de 30 de zile
                     setcookie('remember_me', $user_data['id'], time() + (30 * 24 * 60 * 60));
                 }
 
