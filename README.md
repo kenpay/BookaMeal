@@ -29,6 +29,6 @@ Pagina de login are si un buton de Remember me, care seteaza un cookie valabil 3
 Baza de date de tip MySQL are doar tabela de useri, in care sunt incluse toate tabelele necesare functionalitatilor descrise pana acum.
 Numele de utilizator si adresele de email sunt unice, este logata data si ora la care este creeat un user. In viitor va fi stocat aici si ultimul cod de validare generat, alaturi de data si ora crearii lui, pentru a se putea verifica daca e expirat; la ora actuala codurile sunt stocate in sesiune ceea ce nu ofera multa siguranta.
 
-Aplicatia este hostata la linkul http://rezervomatic.fwh.is/signup.php, insa la ora actuala implementarea reCaptcha este defectuoasa, si urmeaza a fi modificata (serviciul a suferit recent modificari incompatibile cu implementarea mea, care trebuie modificata)
-
 Utilizatorii au un atribut de in baza de date care le ofera sau nu calitatea de Admin. Acest atribut este verificat cu o functie din fisierul functions.php, urmand ca in viitor sa aiba aptitudini suplimentare, precum editarea meniului disponibil clientilor.
+
+Aplicatia este hostata la linkul http://rezervomatic.fwh.is/signup.php, insa la ora actuala implementarea reCaptcha este defectuoasa, si urmeaza a fi modificata (serviciul a suferit recent modificari incompatibile cu implementarea mea, care trebuie modificata)
