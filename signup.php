@@ -15,9 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $confirm_password = mysqli_real_escape_string($con, $_POST['confirm_password']);
     $user_email = mysqli_real_escape_string($con, $_POST['user_email']);
 
-     //Verify the reCAPTCHA response
+     //Verify response
     if (isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response'])) {
-        $secretKey = '6LeYAo0qAAAAAPU0UnfnvmfetwFzUyyBg387ci0A'; // Your secret key
+        $secretKey = '6LeYAo0qAAAAAPU0UnfnvmfetwFzUyyBg387ci0A';
         $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $_POST['g-recaptcha-response']);
         $responseData = json_decode($verifyResponse);
 
