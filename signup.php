@@ -15,72 +15,70 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $confirm_password = mysqli_real_escape_string($con, $_POST['confirm_password']);
     $user_email = mysqli_real_escape_string($con, $_POST['user_email']);
 
-     //Verify response
-    if (isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response'])) {
-        $secretKey = '6LeYAo0qAAAAAPU0UnfnvmfetwFzUyyBg387ci0A';
-        $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secretKey . '&response=' . $_POST['g-recaptcha-response']);
-        $responseData = json_decode($verifyResponse);
+    // Validate form input
+    if (!empty($user_name) && !empty($password) && !empty($confirm_password) && !empty($user_email) && !is_numeric($user_name)) {
+        if ($password === $confirm_password) {
+            // Check if the email or username is already used
+           $query_check = "SELECT * FROM users WHERE email = '$user_email' OR user_name = '$user_name'";
+            $result_check = mysqli_query($con, $query_check);
 
-        if ($responseData->success) {
-            if (!empty($user_name) && !empty($password) && !empty($confirm_password) && !empty($user_email) && !is_numeric($user_name)) {
-                if ($password === $confirm_password) {
-                    // Check if the email is already used
-                    $query_check_email = "SELECT * FROM users WHERE email = '$user_email'";
-                    $result_check_email = mysqli_query($con, $query_check_email);
-
-                    if ($result_check_email && mysqli_num_rows($result_check_email) > 0) {
-                        $signup_message = 'Adresa de email este deja folosita. Va rugam sa folosi?i alta.';
-                    } else {
-                        $verification_code = random_num(6);
-
-                        // Store details in the session
-                        $_SESSION['verification_code_' . $user_email] = $verification_code;
-                        $_SESSION['user_name_' . $user_email] = $user_name;
-                        $_SESSION['user_email_' . $user_email] = $user_email;
-                        $_SESSION['hashed_password_' . $user_email] = password_hash($password, PASSWORD_DEFAULT);
-
-                        // Send the verification email
-                        $mail = new PHPMailer\PHPMailer\PHPMailer();
-                        $mail->isSMTP();
-                        $mail->SMTPSecure = 'tls';
-                        $mail->Host = 'smtp.gmail.com';
-                        $mail->SMTPAuth = true;
-                        $mail->Username = 'platformapoodle@gmail.com';
-                        $mail->Password = 'wpqx nikt bmvt xkia';
-                        $mail->SMTPSecure = 'tls';
-                        $mail->Port = 587;
-
-                        $mail->setFrom('platformapoodle@gmail.com', 'platformapoodle');
-                        $mail->addAddress($user_email, $user_name);
-                        $mail->Subject = 'Confirmation Code';
-                        $mail->Body = 'Your confirmation code is: ' . $verification_code;
-
-                        if ($mail->send()) {
-                            header("Location: verify.php?user=" . urlencode($user_email));
-                            exit;
-                        } else {
-                            $signup_message = 'E-mailul de verificare nu a putut fi trimis. Va rugam sa ï¿½ncerca?i din nou.';
-                        }
+            if ($result_check) {
+                if (mysqli_num_rows($result_check) > 0) {
+                    // Determine if the duplicate is an email or username
+                    $existing_user = mysqli_fetch_assoc($result_check);
+                    if ($existing_user['email'] === $user_email) {
+                        $signup_message = 'Adresa de email este deja folosita. Vã rugam sa folositi alta.';
+                    } elseif ($existing_user['user_name'] === $user_name) {
+                        $signup_message = 'Numele de utilizator este deja folosit. Va rugam sa alegeti altul.';
                     }
                 } else {
-                    $signup_message = 'Parolele nu se potrivesc.';
+                    $verification_code = random_num(6);
+
+                    // Store details in the session
+                    $_SESSION['verification_code_' . $user_email] = $verification_code;
+                    $_SESSION['user_name_' . $user_email] = $user_name;
+                    $_SESSION['user_email_' . $user_email] = $user_email;
+                    $_SESSION['hashed_password_' . $user_email] = password_hash($password, PASSWORD_DEFAULT);
+
+                    // Send the verification email
+                    $mail = new PHPMailer\PHPMailer\PHPMailer();
+                    $mail->isSMTP();
+                    $mail->SMTPSecure = 'tls';
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'platformapoodle@gmail.com';
+                    $mail->Password = 'wpqx nikt bmvt xkia';
+                    $mail->Port = 587;
+
+                    $mail->setFrom('platformapoodle@gmail.com', 'platformapoodle');
+                    $mail->addAddress($user_email, $user_name);
+                    $mail->Subject = 'Confirmation Code';
+                    $mail->Body = 'Your confirmation code is: ' . $verification_code;
+
+                    if ($mail->send()) {
+                        header("Location: verify.php?user=" . urlencode($user_email));
+                        exit;
+                    } else {
+                        $signup_message = 'E-mailul de verificare nu a putut fi trimis. Vã rugãm sã încerca?i din nou.';
+                    }
                 }
             } else {
-                $signup_message = 'Va rugam introduce?i informa?ii valide!';
+                $signup_message = 'Eroare la interogarea bazei de date: ' . mysqli_error($con);
             }
         } else {
-            $signup_message = 'Verificarea reCAPTCHA a e?uat. ï¿½ncerca?i din nou.';
+            $signup_message = 'Parolele nu se potrivesc.';
         }
     } else {
-        $signup_message = 'Va rugam sa completa?i verificarea reCAPTCHA.';
+        $signup_message = 'Vã rugãm introduce?i informa?ii valide!';
     }
 }
 ?>
-
 <!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         body {
             background-image: url('record.jpeg');
@@ -138,13 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             color: #444;
         }
 
-        #error {
-            color: red;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        /* Stil pentru mesajul de eroare de signup */
         #signup-message {
             color: red;
             font-size: 14px;
@@ -160,10 +151,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             <input id="text" type="email" name="user_email" placeholder="Email" required>
             <input id="text" type="password" name="password" placeholder="Password" required>
             <input id="text" type="password" name="confirm_password" placeholder="Confirm Password" required>
-            <div class="g-recaptcha" data-sitekey="6LdlnTIqAAAAACQjydgzqgV_FR9uhIzQXnTyfAE9"></div>
             <input id="button" type="submit" value="Signup">
             <a href="login.php" id="signup">Login</a>
-            <div id="error">
+            <div id="signup-message">
                 <?php echo $signup_message; ?>
             </div>
         </form>

@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $reset_code = $_POST['reset_code'];
 
-    // verificare cod si email
+    // Verify the reset code and email
     $stmt = $con->prepare("SELECT id FROM users WHERE email = ? AND reset_token = ? AND reset_expiration > NOW()");
     
     if (!$stmt) {
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     if ($result->num_rows > 0) {
         $_SESSION['reset_email'] = $email;
-        header("Location: password_reset_form.php"); // Redirect la forum
+        header("Location: password_reset_form.php"); // Redirect to the reset form
         exit;
     } else {
         echo "Codul de resetare este invalid sau a expirat.";

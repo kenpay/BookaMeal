@@ -4,14 +4,14 @@ ob_start();
 include("connect.php");
 include("functions.php");
 
-// Verifica daca a fost trimis un formular de autentificare prin POST
+// Verifică dacă a fost trimis un formular de autentificare prin POST
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $user_name = mysqli_real_escape_string($con, $_POST['user_name']);
     $password = mysqli_real_escape_string($con, $_POST['password']);
 
-    // Verifica daca utilizatorul si parola nu sunt goale si numele de utilizator nu este numeric
+    // Verifică dacă utilizatorul și parola nu sunt goale și numele de utilizator nu este numeric
     if (!empty($user_name) && !empty($password) && !is_numeric($user_name)) {
-        // Cauta utilizatorul in baza de date folosind numele de utilizator
+        // Caută utilizatorul în baza de date folosind numele de utilizator
         $query = "SELECT * FROM users WHERE user_name='$user_name' LIMIT 1";
         $result = mysqli_query($con, $query);
 
@@ -19,20 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $user_data = mysqli_fetch_assoc($result);
             $hashed_password = $user_data['password'];
 
-            // Verifica daca parola introdusa corespunde cu parola hashuita stocata in baza de date
+            // Verifică dacă parola introdusă corespunde cu parola hashuită stocată în baza de date
             if (password_verify($password, $hashed_password)) {
-                // Verifica daca caseta "Tine-ma minte" este bifata
+                // Verifică dacă caseta "Tine-mă minte" este bifată
                 if (isset($_POST['remember_me'])) {
-                    // Seteaza un cookie pentru a retine utilizatorul timp de 30 de zile
+                    // Setează un cookie pentru a reține utilizatorul timp de 30 de zile (sau orice altă perioadă dorită)
                     setcookie('remember_me', $user_data['id'], time() + (30 * 24 * 60 * 60));
                 }
 
-                // Seteaza sesiunea cu ID-ul si starea de administrator
+                // Setează sesiunea cu ID-ul și starea de administrator
                 $_SESSION['user'] = $user_data['id'];
                 $_SESSION['is_admin'] = $user_data['is_admin'];
 
-                // Autentificare reusita, redirectioneaza catre pagina principala
-                header("Location: home.php");
+                // Autentificare reușită, redirecționează către pagina principală
+                header("Location: index.php");
                 exit;
             } else {
                 echo '<span style="color:#AFA;text-align:center;">Wrong username or password</span>';
@@ -132,10 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             <div style="font-size: 24px; margin-bottom: 20px;">Login</div>
             <input id="text" type="text" name="user_name" placeholder="Username">
             <input id="text" type="password" name="password" placeholder="Password">
-            <label for="remember_me"><input type="checkbox" id="remember_me" name="remember_me"> Tine-ma minte</label>
+            <label for="remember_me"><input type="checkbox" id="remember_me" name="remember_me"> Tine-mă minte</label>
             <input id="button" type="submit" value="Login">
             <a href="signup.php" id="signup">Signup</a>
-            <a href="password_reset_request.php" id="reset_password">Resetare Parola</a> <!-- Link to Password Reset Request -->
+            <a href="password_reset_request.php" id="reset_password">Resetare Parolă</a> <!-- Link to Password Reset Request -->
             <div id="error">
                 <?php
                 if ($_SERVER['REQUEST_METHOD'] == "POST") {

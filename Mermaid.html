@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Diagramă</title> <script type="module"> import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.esm.min.mjs'; mermaid.initialize({ startOnLoad: true }); </script>
+</head>
+<body>
+	<h1>Diagrama de clasa</h1>
+    <div class="mermaid">
+        classDiagram
+			class Rezervare {
+				+int id
+				+String nume
+				+String email
+				+String telefon
+				+String data
+				+String ora
+				+int numar_persoane
+				+save()
+			}
+			class Client {
+				+int id
+				+String nume
+				+String email
+				+String telefon
+				+String parola
+				+login()
+			}
+			class Feedback {
+				+int id
+				+String comentarii
+				+int evaluare
+				+Date data
+				+submit()
+			}
+			Client "1" --> "0..*" Rezervare : face
+			Client "1" --> "0..*" Feedback : trimite
+			Rezervare "1" --> "0..*" Feedback : legat_de
+
+
+    </div>
+	<h1>Diagrama de pachete</h1>
+	<div class="mermaid">
+        classDiagram
+    class Pachet1 {
+        ClasaA
+        ClasaB
+    }
+
+    class Pachet2 {
+        ClasaC
+        ClasaD
+    }
+
+    ClasaA --> ClasaC : "relație"
+    ClasaB --> ClasaD : "relație"
+
+
+
+
+
+    </div>
+	<h1>Diagrama de componente</h1>
+	<div class="mermaid">
+        graph TD
+			Client -->|HTTP| WebServer
+			WebServer -->|JDBC| BazaDeDate
+			WebServer -->|REST| Backend
+
+    </div>
+	<h1>Diagrama de deployment</h1>
+	<div class="mermaid">
+        graph TD
+			User --> Browser
+			Browser --> WebServer
+			WebServer --> ApplicationServer
+			ApplicationServer --> Database
+
+    </div>
+	<h1>Diagrama use case</h1>
+	<div class="mermaid">
+        %%{init: {'theme': 'base'}}%%
+		---
+		title: Diagrama de Use Case
+		---
+		usecaseDiagram
+			actor Client as "Client"
+			usecase UC1 as "Rezervare masa"
+			usecase UC2 as "Verificare disponibilitate"
+			usecase UC3 as "Confirmare rezervare"
+		
+			Client --> UC1
+			UC1 --> UC2
+			UC1 --> UC3
+
+
+    </div>
+	<h1>Diagrama de stare</h1>
+	<div class="mermaid">
+        stateDiagram-v2
+			[*] --> Inregistrare
+			Inregistrare --> Logare
+			Logare --> AlegereMasa
+			AlegereMasa --> Confirmare
+			Confirmare --> [*]
+
+    </div>
+	<h1>Diagrama de activitate</h1>
+	<div class="mermaid">
+        flowchart TD
+			A(Deschide site) --> B(Inregistreaza-se)
+			B --> C(Autentificare)
+			C --> D(Alege masa)
+			D --> E(Confirmare rezervare)
+			E --> F(Finalizare)
+
+    </div>
+	<h1>Diagrama de interactiune</h1>
+	<div class="mermaid">
+        sequenceDiagram
+			participant Client
+			participant WebServer
+			participant ApplicationServer
+			participant Database
+		
+			Client->>WebServer: Trimite date de rezervare
+			WebServer->>ApplicationServer: Proceseaza date
+			ApplicationServer->>Database: Salveaza rezervarea
+			Database-->>ApplicationServer: Confirmare salvare
+			ApplicationServer-->>WebServer: Raspuns confirmare
+			WebServer-->>Client: Rezervare confirmata
+
+    </div>
+</body>
+</html>

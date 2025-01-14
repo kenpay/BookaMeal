@@ -27,17 +27,17 @@ if (isset($_GET['user']) && isset($_POST['verification_code'])) {
             $query = "INSERT INTO users (user, user_name, password, email) VALUES (UUID(), '$user_name', '$hashed_password', '$user_email')";
             if (mysqli_query($con, $query)) {
                 // User inserted successfully
-                header("Location: login.php"); // Redirect la login
+                header("Location: login.php"); // Redirect to login page
                 exit;
             } else {
-                // catchall pentru erori
-                $verification_message = "Eroare la crearea contului. Va rog incercati din nou.";
+                // User insertion failed, show an error message or log the error
+                $verification_message = "Eroare la înregistrarea utilizatorului. Va rugam sa încerca?i din nou.";
             }
         } else {
             $verification_message = 'Codul de verificare nu este corect.';
         }
     } else {
-        $verification_message = 'Eroare la verificarea codului. Va rugam sincercati din nou';
+        $verification_message = 'Eroare la verificarea codului. Va rugam sa încerca?i din nou.';
     }
 }
 ?>
